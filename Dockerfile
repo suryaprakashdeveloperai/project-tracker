@@ -1,15 +1,14 @@
-# Step 1: Use an official Java runtime
+# STAGE 1: Build the application
+FROM gradle:8.5-jdk17 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+# Run the build command to create the JAR file
+RUN ./gradlew bootJar --no-daemon
+
+# STAGE 2: Run the application
 FROM eclipse-temurin:17-jdk-alpine
-
-# Step 2: Set the directory inside the container
-WORKDIR /app
-
-# Step 3: Copy your project's JAR file
-# Render will find the JAR in build/libs/ after the build step
-COPY build/libs/*.jar app.jar
-
-# Step 4: Expose the port
 EXPOSE 8080
-
-# Step 5: START THE APP (Replace the 'top' command)
+WORKDIR /app
+# Copy the JAR specifically from the 'build' stage above
+COPY --from=build /home/gradle/src/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
