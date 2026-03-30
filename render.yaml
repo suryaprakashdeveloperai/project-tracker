@@ -1,4 +1,12 @@
-FROM ubuntu:latest
-LABEL authors="DELL"
-
-ENTRYPOINT ["top", "-b"]
+services:
+  - type: web
+    name: project-tracker-backend
+    runtime: docker
+    plan: free
+    envVars:
+      - key: DB_URL
+        sync: false # You will enter this manually in the Render Dashboard
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
